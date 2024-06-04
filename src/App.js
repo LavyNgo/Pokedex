@@ -1,25 +1,46 @@
-import logo from './logo.svg';
 import './App.css';
+import { PokeList } from './components/PokeList';
+import { PokemonDetail } from './components/PokemonDetail';
+import React, { Component } from 'react';
+import Pokemon from './components/Pokemon';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+
+  constructor() {
+    super()
+    // default id = 1 when refresh the page
+    this.state = {
+      pokemon: {
+        id: 1,
+        name: 'bulbasaur',
+        type: 'grass',
+        height: 7,
+        weight: 69,
+        sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png'
+      }
+    }
+
+    this.handleOnClick = this.handleOnClick.bind(this)
+  }
+
+  handleOnClick(id) {
+    fetch(`https://pokeapi.co/api/v2/pokemon/${id}`)
+      .then(response => response.json())
+      .then(data => {
+        const pokemon = new Pokemon(data)
+        this.setState({ pokemon })
+      })
+      .catch(err => console.log(err))
+  }
+
+  render() {
+    return (
+      <div className="App" >
+        <PokeList handleOnClick={this.handleOnClick} />
+        <PokemonDetail pokemon={this.state.pokemon} />
+      </div>
+    );
+  }
 }
 
 export default App;
